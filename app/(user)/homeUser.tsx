@@ -15,7 +15,6 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface Barang {
   id: number;
@@ -132,14 +131,6 @@ const HomeUser = () => {
                     <Entypo name="chat" size={24} color="white" />
                   </View>
                   <Text className="text-secondary">Saran</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                 onPress={() => router.push("/Info")}
-                className="w-20 items-center">
-                  <View className="w-14 h-14 bg-primary items-center justify-center rounded-lg">
-                  <MaterialCommunityIcons name="information" size={24} color="white" />
-                  </View>
-                  <Text className="text-secondary">Info</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>

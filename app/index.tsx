@@ -1,9 +1,9 @@
 import ButtonWhite from "@/components/ButtonWhite";
-import { RoleID} from "@/lib";
+import { RoleID } from "@/lib";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Index() {
 
   useEffect(() => {
     const checkToken = async () => {
-    try {
+      try {
         const roleID = await RoleID();
         const token = await AsyncStorage.getItem("authToken");
         if (token) {
@@ -36,13 +36,20 @@ export default function Index() {
 
   return (
     <View className="bg-[#013FC4] h-full">
-      <View className="mx-4 my-28 gap-20 h-full flex-1 justify-end">
+      <View className="items-center justify-center h-1/2">
+        <View className="bg-white p-5 rounded-xl">
+          <Image source={require("../assets/images/Logo.png")} />
+        </View>
+      </View>
+      <View className="mx-4 my-28 gap-20 h-full flex-1 justify-end ">
         <View>
           <Text className="text-white font-bold text-5xl">Selamat Datang</Text>
           <Text className="text-abu text-lg mt-10">
             Lakukan proses peminjaman
           </Text>
-          <Text className="text-white font-semibold text-2xl">Cepat & Efisien</Text>
+          <Text className="text-white font-semibold text-2xl">
+            Cepat & Efisien
+          </Text>
         </View>
         <ButtonWhite text="Mulai Sekarang" handle={handleLink} />
       </View>

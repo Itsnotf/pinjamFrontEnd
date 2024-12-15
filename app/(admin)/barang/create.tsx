@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import {
   Image,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
   Alert,
   ScrollView,
@@ -12,12 +10,11 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import BaseUrl from "@/lib";
 import ButtonImage from "@/components/ButtonImage";
 import InputText from "@/components/InputText";
 import ButtonBlue from "@/components/ButtonBlue";
-import { router } from "expo-router";
 
 const FormData = global.FormData;
 
@@ -27,7 +24,6 @@ const CreateBarang: React.FC = () => {
   const [lokasi, setLokasi] = useState("");
   const [stok, setStok] = useState("");
   const [gambar, setGambar] = useState("");
-
   const [msg, setMsg] = useState("");
 
   const pickImage = async () => {
@@ -71,51 +67,74 @@ const CreateBarang: React.FC = () => {
   };
 
   const saveImage = async (imageUri: string) => {
-    try {
-      setGambar(imageUri);
-    } catch (error: any) {
-      console.error("Error saving image:", error);
-    }
+    setGambar(imageUri);
+  };
+
+  const validateFields = () => {
+    if (!nama_barang) return "Nama Barang";
+    if (!stok) return "Stok";
+    if (!lokasi) return "Lokasi";
+    if (!merk) return "Merk";
+    if (!gambar) return "Gambar";
+    return null;
   };
 
   const handleSubmit = async () => {
-    try {
-      const token = await AsyncStorage.getItem("authToken");
+    const emptyField = validateFields();
 
-      if (!token) {
-        setMsg("Auth token is missing.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("nama_barang", nama_barang);
-      formData.append("merk", merk);
-      formData.append("lokasi", lokasi);
-      formData.append("stok", stok);
-
-      if (gambar) {
-        formData.append("gambar", {
-          uri: gambar,
-          type: "image/png",
-          name: "gambar-barang.png",
-        } as any);
-      }
-
-      const response = await axios.post(`${BaseUrl}/barang`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      ToastAndroid.show("Data berhasil dibuat!", ToastAndroid.SHORT);
-      console.log("Success:", response.data);
-    } catch (error: any) {
-      console.error("Request error:", error);
-      setMsg("Terjadi kesalahan. Silakan coba lagi.");
-    }finally{
-      router.push('/(admin)/barang')
+    if (emptyField) {
+      ToastAndroid.show(`Data ${emptyField} Belum Terisi` , ToastAndroid.SHORT);
+      return;
     }
+
+    Alert.alert(
+      "Konfirmasi",
+      "Apakah data sudah benar?",
+      [
+        { text: "Batal", style: "cancel" },
+        {
+          text: "Ya",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("authToken");
+              if (!token) {
+                setMsg("Auth token is missing.");
+                return;
+              }
+
+              const formData = new FormData();
+              formData.append("nama_barang", nama_barang);
+              formData.append("merk", merk);
+              formData.append("lokasi", lokasi);
+              formData.append("stok", stok);
+              if (gambar) {
+                formData.append("gambar", {
+                  uri: gambar,
+                  type: "image/png",
+                  name: "gambar-barang.png",
+                } as any);
+              }
+
+              const response = await axios.post(`${BaseUrl}/barang`, formData, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "multipart/form-data",
+                },
+              });
+
+              ToastAndroid.show("Data berhasil dibuat!", ToastAndroid.SHORT);
+              console.log("Success:", response.data);
+
+              router.push("/(admin)/barang");
+            } catch (error: any) {
+              console.error("Request error:", error);
+              setMsg("Terjadi kesalahan. Silakan coba lagi.");
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (

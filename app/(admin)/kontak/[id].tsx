@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   ScrollView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -70,7 +71,7 @@ const DetailKontak = () => {
     setIsEditing(false);
   };
 
-  const handleSubmit = async () => {
+  const sendSubmit = async () => {
     try {
       const token = await getToken();
       if (!token) {
@@ -111,6 +112,17 @@ const DetailKontak = () => {
       setIsEditing(false);
     }
   };
+
+  const handleSubmit = () => {
+      Alert.alert(
+        "Konfirmasi",
+        "Anda yakin ingin memperbarui Kontak berikut?",
+        [
+          { text: "Batal", style: "cancel" },
+          { text: "Ya", onPress: sendSubmit },
+        ]
+      );
+    };
 
   const handleDelete = async () => {
     try {

@@ -10,9 +10,26 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const HomeAdmin = () => {
   const router = useRouter();
+
+  const handleBarang = () => {
+    router.push("/(admin)/barang");
+  };
+
+  const handleKontak = () => {
+    router.push("/(admin)/kontak");
+  };
+
+  const handleSaran = () => {
+    router.push("/(admin)/saran");
+  };
+
+  const handlePeminjaman = () => {
+    router.push("/(admin)/peminjaman");
+  };
 
   const handleLogout = async () => {
     try {
@@ -50,30 +67,97 @@ const HomeAdmin = () => {
           </Text>
         </View>
 
-        <CardFitur
-          jumlah=""
-          title="Barang"
-          desk="Anda dapat memanejemen Kontak disini"
-          link="/barang"
-        />
-        <CardFitur
-          jumlah=""
-          title="Kontak"
-          desk="Kontak barang di aplikasi ini "
-          link="/kontak"
-        />
-        <CardFitur
-        jumlah=""
-          title="Saran"
-          desk="Lihat saran yang telah diberikan"
-          link="/saran"
-        />
-        <CardFitur
-        jumlah=""
-          title="Peminjaman"
-          desk="Lihat peminjaman yang telah terjadi"
-          link="/peminjaman"
-        />
+        <TouchableOpacity
+          onPress={handleBarang}
+          className="w-full my-3 justify-center px-4"
+        >
+          <View className="bg-abu h-[150px] flex flex-row rounded-xl px-4">
+            <View className="w-[45%] justify-center items-start">
+              <View className="w-[90%] h-[90%] items-center justify-center rounded-lg">
+                <MaterialIcons name="inventory" color="#013FC4" size={62} />
+              </View>
+            </View>
+
+            <View className="w-[55%] justify-center gap-2">
+              <Text className="text-2xl text-secondary font-semibold">
+                List Barang
+              </Text>
+              <Text className="text-abuabu text-sm">
+                Anda dapat memanejemen Barang disini
+              </Text>
+              <Text className="text-secondary font-semibold">Barang</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleKontak}
+          className="w-full my-3 justify-center px-4"
+        >
+          <View className="bg-abu h-[150px] flex flex-row rounded-xl px-4">
+            <View className="w-[45%] justify-center items-start">
+              <View className="w-[90%] h-[90%] items-center justify-center rounded-lg">
+              <MaterialIcons name="contact-phone" color="#013FC4" size={50} />
+              </View>
+            </View>
+
+            <View className="w-[55%] justify-center gap-2">
+              <Text className="text-2xl text-secondary font-semibold">
+                List Kontak
+              </Text>
+              <Text className="text-abuabu text-sm">
+                Anda dapat memanejemen Kontak disini
+              </Text>
+              <Text className="text-secondary font-semibold">Kontak</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleSaran}
+          className="w-full my-3 justify-center px-4"
+        >
+          <View className="bg-abu h-[150px] flex flex-row rounded-xl px-4">
+            <View className="w-[45%] justify-center items-start">
+              <View className="w-[90%] h-[90%] items-center justify-center rounded-lg">
+              <MaterialIcons name="mail" color="#013FC4" size={62} />
+              </View>
+            </View>
+
+            <View className="w-[55%] justify-center gap-2">
+              <Text className="text-2xl text-secondary font-semibold">
+                List Saran
+              </Text>
+              <Text className="text-abuabu text-sm">
+                Anda dapat memanejemen Saran disini
+              </Text>
+              <Text className="text-secondary font-semibold">Saran</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePeminjaman}
+          className="w-full my-3 justify-center px-4"
+        >
+          <View className="bg-abu h-[150px] flex flex-row rounded-xl px-4">
+            <View className="w-[45%] justify-center items-start">
+              <View className="w-[90%] h-[90%] items-center justify-center rounded-lg">
+              <Ionicons name="bag-handle-sharp" color="#013FC4" size={62} />
+              </View>
+            </View>
+
+            <View className="w-[55%] justify-center gap-2">
+              <Text className="text-2xl text-secondary font-semibold">
+                List Peminjaman
+              </Text>
+              <Text className="text-abuabu text-sm">
+                Anda dapat memanejemen Peminjaman disini
+              </Text>
+              <Text className="text-secondary font-semibold">Peminjaman</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

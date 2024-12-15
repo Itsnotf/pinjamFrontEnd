@@ -113,24 +113,24 @@ const DetailBarang: React.FC = () => {
     ]);
   };
 
-  const handleSubmit = async () => {
+  const submitData = async () => {
     setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("authToken");
-
+  
       if (!token) {
         setMsg("Auth token is missing.");
         setIsLoading(false);
         return;
       }
-
+  
       const formData = new FormData();
       formData.append("nama_barang", nama_barang);
       formData.append("merk", merk);
       formData.append("lokasi", lokasi);
       formData.append("stok", stok);
       formData.append("_method", "PUT");
-
+  
       if (gambarBaru) {
         formData.append("gambar", {
           uri: gambarBaru,
@@ -138,14 +138,14 @@ const DetailBarang: React.FC = () => {
           name: "gambar-barang.png",
         } as any);
       }
-
+  
       const response = await axios.post(`${BaseUrl}/barang/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-
+  
       if (!response.data.status) {
         setMsg(response.data.message);
         console.log(response.data.data);
@@ -160,6 +160,17 @@ const DetailBarang: React.FC = () => {
       setEdit(false);
       setIsLoading(false);
     }
+  };
+  
+  const handleSubmit = () => {
+    Alert.alert(
+      "Konfirmasi",
+      "Anda yakin ingin memperbarui barang berikut?",
+      [
+        { text: "Batal", style: "cancel" },
+        { text: "Ya", onPress: submitData },
+      ]
+    );
   };
 
   const handleDelete = async () => {

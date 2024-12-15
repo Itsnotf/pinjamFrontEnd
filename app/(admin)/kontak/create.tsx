@@ -20,7 +20,7 @@ import { router } from "expo-router";
 import InputText from "@/components/InputText";
 import ButtonBlue from "@/components/ButtonBlue";
 
-const CreateBarang: React.FC = () => {
+const CreateKontak: React.FC = () => {
   const [nama_staff, setNama_staff] = useState("");
   const [badge, setBadge] = useState("");
   const [nohp, setNohp] = useState("");
@@ -28,10 +28,30 @@ const CreateBarang: React.FC = () => {
 
   const [msg, setMsg] = useState("");
 
+  const validateInput = () => {
+    if (!nama_staff.trim() || !badge.trim() || !nohp.trim()) {
+      ToastAndroid.show("Harap isi semua input!", ToastAndroid.SHORT);
+      return false;
+    }
+    return true;
+  };
+
+  const confirmSubmit = () => {
+    Alert.alert(
+      "Konfirmasi",
+      "Apakah data yang Anda masukkan sudah benar?",
+      [
+        { text: "Batal", style: "cancel" },
+        { text: "Ya", onPress: handleSubmit },
+      ]
+    );
+  };
+
   const handleSubmit = async () => {
     try {
-      const token = await getToken();
+      if (!validateInput()) return;
 
+      const token = await getToken();
       if (!token) {
         setMsg("Auth token is missing.");
         return;
@@ -57,80 +77,80 @@ const CreateBarang: React.FC = () => {
       });
 
       if (response.status === 200) {
-        ToastAndroid.show('Data Berhasil Di Buat',ToastAndroid.SHORT)
-        router.push('/(admin)/kontak')
+        ToastAndroid.show("Data Berhasil Dibuat", ToastAndroid.SHORT);
+        router.push("/(admin)/kontak");
       } else {
-        setMsg(`Failed to create data: ${response.statusText}`);
+        console.log(response.statusText);
       }
     } catch (error: any) {
       console.error("Request error:", error);
       const errorMessage =
         error.response?.data?.message ||
         "Terjadi kesalahan. Silakan coba lagi.";
-      console.log(errorMessage);
+      setMsg(errorMessage);
     }
   };
 
   return (
     <View className="bg-primary">
-    <ScrollView className="bg-white mt-5 h-full rounded-t-3xl">
-      <View className="mx-4 mt-2">
-        <View className="flex items-center">
-          <View className="relative w-56 h-56 bg-abu rounded-full mb-6">
-            <Image
-              style={{
-                borderRadius: 9999,
-                width: "100%",
-                height: "100%",
-              }}
-              source={
-                selectedImage
-                  ? { uri: selectedImage }
-                  : require("../../../assets/images/adaptive-icon.png")
-              }
-              resizeMode="cover"
-            />
-            <View className="absolute bottom-0 right-3">
-              <ButtonImage handler={pickImage} />
+      <ScrollView className="bg-white mt-5 h-full rounded-t-3xl">
+        <View className="mx-4 mt-2">
+          <View className="flex items-center">
+            <View className="relative w-56 h-56 bg-abu rounded-full mb-6">
+              <Image
+                style={{
+                  borderRadius: 9999,
+                  width: "100%",
+                  height: "100%",
+                }}
+                source={
+                  selectedImage
+                    ? { uri: selectedImage }
+                    : require("../../../assets/images/adaptive-icon.png")
+                }
+                resizeMode="cover"
+              />
+              <View className="absolute bottom-0 right-3">
+                <ButtonImage handler={pickImage} />
+              </View>
             </View>
           </View>
+
+          <InputText
+            text="Nama Staff"
+            value={nama_staff}
+            placeholder="Masukkan Nama Staff"
+            keyboard="default"
+            onChange={(value: any) => setNama_staff(value)}
+          />
+
+          <InputText
+            text="Badge"
+            value={badge}
+            placeholder="Masukkan Badge"
+            keyboard="default"
+            onChange={(value: any) => setBadge(value)}
+          />
+
+          <InputText
+            text="No HP"
+            value={nohp}
+            placeholder="Masukkan No HP"
+            keyboard="number-pad"
+            onChange={(value: any) => setNohp(value)}
+          />
+
+          <View className="my-10">
+            <ButtonBlue text="Submit" handle={confirmSubmit} />
+          </View>
+
+          {msg && (
+            <Text className="text-red-500 text-center mt-4 text-sm">{msg}</Text>
+          )}
         </View>
-
-        <InputText
-          text="Nama Staff"
-          value={nama_staff}
-          placeholder="Masukan Nama Staff"
-          keyboard="default"
-          onChange={(value: any) => setNama_staff(value)}
-        />
-
-        <InputText
-          text="Badge"
-          value={badge}
-          placeholder="Masukan Badge"
-          keyboard="default"
-          onChange={(value: any) => setBadge(value)}
-        />
-
-        <InputText
-          text="No HP"
-          value={nohp}
-          placeholder="Masukan No HP"
-          keyboard="number-pad"
-          onChange={(value: any) => setNohp(value)}
-        />
-
-        <View className="my-10">
-          <ButtonBlue text="Submit" handle={handleSubmit} />
-        </View>
-
-        {msg && (
-          <Text className="text-red-500 text-center mt-4 text-sm">{msg}</Text>
-        )}
-      </View>
-    </ScrollView>
-  </View>
+      </ScrollView>
+    </View>
   );
 };
 
-export default CreateBarang;
+export default CreateKontak;
