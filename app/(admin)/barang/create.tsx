@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   ToastAndroid,
+  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,16 +16,25 @@ import BaseUrl from "@/lib";
 import ButtonImage from "@/components/ButtonImage";
 import InputText from "@/components/InputText";
 import ButtonBlue from "@/components/ButtonBlue";
+import SelectInput from "@/components/SelectInput";
 
 const FormData = global.FormData;
+
+interface Katagori {
+  id: number;
+  nama: string;
+  desk: string;
+}
 
 const CreateBarang: React.FC = () => {
   const [nama_barang, setNama_barang] = useState("");
   const [merk, setMerk] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [stok, setStok] = useState("");
+  const [serial, setSerial] = useState("");
+  const [katagoriId, setKatagoriId] = useState<number | null>(null);
   const [gambar, setGambar] = useState("");
-  const [msg, setMsg] = useState("");
+  const [katagori, setKatagori] = useState<Katagori[]>([]);
 
   const pickImage = async () => {
     Alert.alert(
@@ -34,7 +44,6 @@ const CreateBarang: React.FC = () => {
         {
           text: "Galeri",
           onPress: async () => {
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
             const result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               allowsEditing: true,
@@ -49,7 +58,6 @@ const CreateBarang: React.FC = () => {
         {
           text: "Kamera",
           onPress: async () => {
-            await ImagePicker.requestCameraPermissionsAsync();
             const result = await ImagePicker.launchCameraAsync({
               allowsEditing: true,
               aspect: [1, 1],
@@ -66,7 +74,7 @@ const CreateBarang: React.FC = () => {
     );
   };
 
-  const saveImage = async (imageUri: string) => {
+  const saveImage = (imageUri: string) => {
     setGambar(imageUri);
   };
 
@@ -76,6 +84,7 @@ const CreateBarang: React.FC = () => {
     if (!lokasi) return "Lokasi";
     if (!merk) return "Merk";
     if (!gambar) return "Gambar";
+    if (!katagoriId) return "Kategori";
     return null;
   };
 
@@ -83,7 +92,7 @@ const CreateBarang: React.FC = () => {
     const emptyField = validateFields();
 
     if (emptyField) {
-      ToastAndroid.show(`Data ${emptyField} Belum Terisi` , ToastAndroid.SHORT);
+      ToastAndroid.show(`Data ${emptyField} Belum Terisi`, ToastAndroid.SHORT);
       return;
     }
 
@@ -98,15 +107,19 @@ const CreateBarang: React.FC = () => {
             try {
               const token = await AsyncStorage.getItem("authToken");
               if (!token) {
-                setMsg("Auth token is missing.");
+                ToastAndroid.show("Token tidak ditemukan.", ToastAndroid.SHORT);
                 return;
               }
 
               const formData = new FormData();
               formData.append("nama_barang", nama_barang);
+              if (katagoriId !== null) {
+                formData.append("katagori_id", katagoriId.toString());
+              }              
               formData.append("merk", merk);
               formData.append("lokasi", lokasi);
               formData.append("stok", stok);
+              formData.append("serial_number", serial);
               if (gambar) {
                 formData.append("gambar", {
                   uri: gambar,
@@ -115,7 +128,7 @@ const CreateBarang: React.FC = () => {
                 } as any);
               }
 
-              const response = await axios.post(`${BaseUrl}/barang`, formData, {
+              await axios.post(`${BaseUrl}/barang`, formData, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                   "Content-Type": "multipart/form-data",
@@ -123,12 +136,13 @@ const CreateBarang: React.FC = () => {
               });
 
               ToastAndroid.show("Data berhasil dibuat!", ToastAndroid.SHORT);
-              console.log("Success:", response.data);
-
               router.push("/(admin)/barang");
-            } catch (error: any) {
+            } catch (error) {
               console.error("Request error:", error);
-              setMsg("Terjadi kesalahan. Silakan coba lagi.");
+              ToastAndroid.show(
+                "Terjadi kesalahan. Silakan coba lagi.",
+                ToastAndroid.SHORT
+              );
             }
           },
         },
@@ -136,6 +150,32 @@ const CreateBarang: React.FC = () => {
       { cancelable: false }
     );
   };
+
+  const getData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      if (!token) {
+        console.log("Token tidak ditemukan");
+        return;
+      }
+
+      const response = await axios.get(`${BaseUrl}/katagori`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setKatagori(response.data.data);
+    } catch (error) {
+      console.error("Error fetching kategori:", error);
+      ToastAndroid.show(
+        "Gagal memuat kategori. Coba lagi nanti.",
+        ToastAndroid.SHORT
+      );
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <View className="bg-primary">
@@ -162,12 +202,21 @@ const CreateBarang: React.FC = () => {
             </View>
           </View>
 
+          <SelectInput
+            label="Kategori"
+            options={katagori.map((item) => ({
+              label: item.nama,
+              value: item.id,
+            }))}
+            onSelect={(value) => setKatagoriId(value)}
+          />
+
           <InputText
             text="Nama Barang"
             value={nama_barang}
             placeholder="Masukan Nama Barang"
             keyboard="default"
-            onChange={(value: any) => setNama_barang(value)}
+            onChange={setNama_barang}
           />
 
           <InputText
@@ -175,7 +224,15 @@ const CreateBarang: React.FC = () => {
             value={stok}
             placeholder="Masukan Stok"
             keyboard="number-pad"
-            onChange={(value: any) => setStok(value)}
+            onChange={setStok}
+          />
+
+          <InputText
+            text="Serial"
+            value={serial}
+            placeholder="Masukan Serial"
+            keyboard="number-pad"
+            onChange={setSerial}
           />
 
           <InputText
@@ -183,7 +240,7 @@ const CreateBarang: React.FC = () => {
             value={lokasi}
             placeholder="Masukan Lokasi"
             keyboard="default"
-            onChange={(value: any) => setLokasi(value)}
+            onChange={setLokasi}
           />
 
           <InputText
@@ -191,16 +248,12 @@ const CreateBarang: React.FC = () => {
             value={merk}
             placeholder="Masukan Merk"
             keyboard="default"
-            onChange={(value: any) => setMerk(value)}
+            onChange={setMerk}
           />
 
           <View className="my-10">
             <ButtonBlue text="Submit" handle={handleSubmit} />
           </View>
-
-          {msg && (
-            <Text className="text-red-500 text-center mt-4 text-sm">{msg}</Text>
-          )}
         </View>
       </ScrollView>
     </View>

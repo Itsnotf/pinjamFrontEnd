@@ -24,8 +24,8 @@ import ButtonWhite from "@/components/ButtonWhite";
 const DetailKontak = () => {
   const [nama_staf, setNama_staf] = useState("");
   const [badge, setBadge] = useState("");
-  const [hp, setHp] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [hp, setHp] = useState("");
   const [gambar, setGambar] = useState(null);
   const { selectedImage, pickImage } = useImagePicker();
 

@@ -1,29 +1,24 @@
-import CardBarang from "@/components/CardBarang";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import BaseUrl from "@/lib";
+import { Link, router } from "expo-router";
 
-interface Barang {
+interface Katagori {
   id: number;
-  nama_barang: string;
-  merk: string;
-  stok: string;
-  gambar: string;
-  lokasi: string;
-  serial: string;
-  created_at: string;
-  updated_at: string;
+  nama: string;
+  desk: string;
 }
 
-const Barang = () => {
-  const [dataBarang, setDataBarang] = useState<Barang[]>([]); // Menggunakan tipe data Barang
+const Katagori = () => {
+  const [katagori, setKatagori] = useState<Katagori[]>([]); // Menggunakan tipe data Barang
   const [loading, setLoading] = useState(true);
 
   const getData = async () => {
@@ -35,7 +30,7 @@ const Barang = () => {
         return;
       }
 
-      const response = await fetch(`${BaseUrl}/barang`, {
+      const response = await fetch(`${BaseUrl}/katagori`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,7 +44,7 @@ const Barang = () => {
 
       const responseData = await response.json();
       if (responseData.status && Array.isArray(responseData.data)) {
-        setDataBarang(responseData.data);
+        setKatagori(responseData.data);
       } else {
         console.error("Data tidak berbentuk array atau gagal mendapatkan data");
       }
@@ -64,6 +59,10 @@ const Barang = () => {
     getData();
   }, []);
 
+  const handlePress = (id: number) => {
+    router.push(`/katagori/${id}`);
+  };
+
   return (
     <SafeAreaView className="h-full bg-primary">
       <ScrollView
@@ -74,20 +73,20 @@ const Barang = () => {
           <View className="flex-1 items-center justify-center  h-[80vh]">
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
-        ) : dataBarang.length === 0 ? (
+        ) : katagori.length === 0 ? (
           <View className="w-full h-[70vh]  items-center justify-center">
-            <Text className="text-white text-sm">Belum Ada Barang</Text>
+            <Text className="text-white text-sm">Belum Ada Katagori</Text>
           </View>
         ) : (
-          dataBarang.map((barang) => (
-            <CardBarang
-              key={barang.id}
-              link={`/barang/${barang.id}`}
-              nama={barang.nama_barang}
-              desk={barang.merk}
-              quan={barang.stok}
-              gambar={barang.gambar}
-            />
+          katagori.map((katagori) => (
+            <TouchableOpacity
+              onPress={() => handlePress(katagori.id)}
+              key={katagori.id}
+            >
+              <View className="bg-white p-4 my-2 rounded-lg ">
+                <Text className="text-xl font-bold ">{katagori.nama}</Text>
+              </View>
+            </TouchableOpacity>
           ))
         )}
       </ScrollView>
@@ -95,4 +94,4 @@ const Barang = () => {
   );
 };
 
-export default Barang;
+export default Katagori;

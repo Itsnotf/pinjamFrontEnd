@@ -16,6 +16,7 @@ interface Barang {
   nama_barang: string;
   merk: string;
   stok: string;
+  serial: string;
   gambar: string;
   lokasi: string;
   created_at: string;
@@ -63,6 +64,8 @@ const BarangUser = () => {
     getData();
   }, []);
 
+  console.log(dataBarang);
+  
   return (
     <SafeAreaView className="h-full">
       <ScrollView

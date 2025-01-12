@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BaseUrl = "http://192.168.152.98:8000/api";
+const BaseUrl = "http://192.168.223.98:8000/api";
 export default BaseUrl;
 
-export const GambarUrl = "http://192.168.152.98:8000/storage";
+export const GambarUrl = "http://192.168.223.98:8000/storage";
 
 export const getToken = async (): Promise<string | null> => {
   try {

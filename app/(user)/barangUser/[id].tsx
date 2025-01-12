@@ -24,6 +24,8 @@ const DetailBarangUser: React.FC = () => {
   const [merk, setMerk] = useState("");
   const [lokasi, setLokasi] = useState("");
   const [stok, setStok] = useState("");
+  const [katagori, setKatagori] = useState("");
+  const [serial, setSerial] = useState("");
   const [gambar, setGambar] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,9 +52,12 @@ const DetailBarangUser: React.FC = () => {
       const data = res.data.data;
       setNama_barang(data.nama_barang);
       setLokasi(data.lokasi);
+      setSerial(data.serial_number);
       setMerk(data.merk);
       setStok(data.stok);
       setGambar(data.gambar);
+      setKatagori(data.katagori.nama);
+      
     } catch (error) {
       console.error("Failed to fetch data:", error);
       ToastAndroid.show("Gagal Tolong Coba Lagi", ToastAndroid.SHORT);
@@ -83,6 +88,7 @@ const DetailBarangUser: React.FC = () => {
         ToastAndroid.show("Token tidak ditemukan", ToastAndroid.SHORT);
         return;
       }
+      
       const data = {
         id_barang: id,
         jumlah: jumlah,
@@ -161,8 +167,18 @@ const DetailBarangUser: React.FC = () => {
               </View>
 
               <View className="mb-3">
+                <Text className="text-gray-600 font-semibold">Katagori Barang</Text>
+                <Text className="text-base text-gray-800">{katagori}</Text>
+              </View>
+
+              <View className="mb-3">
                 <Text className="text-gray-600 font-semibold">Stok</Text>
                 <Text className="text-base text-gray-800">{stok}</Text>
+              </View>
+
+              <View className="mb-3">
+                <Text className="text-gray-600 font-semibold">Serial</Text>
+                <Text className="text-base text-gray-800">{serial}</Text>
               </View>
 
               <View className="mb-3">

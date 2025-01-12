@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import CardBarang from "@/components/CardBarang";
 import axios from "axios";
 import BaseUrl, { getToken } from "@/lib";
-import { Link, router } from "expo-router";
+import { Href, Link, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -65,6 +65,7 @@ const HomeUser = () => {
       console.error("Error during logout:", error);
     }
   };
+
 
   return (
     <View className="bg-primary">
@@ -152,7 +153,7 @@ const HomeUser = () => {
                 gambar={barang.gambar}
                 nama={barang.nama_barang}
                 quan={barang.stok}
-                link={`barangUser/${barang.id}`}
+                link={`barangUser/${barang.id}` as Href}
                 key={barang.id}
               />
             ))}

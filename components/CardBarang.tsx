@@ -11,7 +11,7 @@ interface CardBarangProps {
   gambar: any; 
 }
 
-const CardBarang: React.FC<CardBarangProps> = ({ link, nama, desk, quan, gambar }) => {
+const CardBarang: React.FC<CardBarangProps> = ({ link, nama, desk, quan, gambar}) => {
   const router = useRouter();
 
   const handleLink = (link: Href) => {
@@ -38,7 +38,6 @@ const CardBarang: React.FC<CardBarangProps> = ({ link, nama, desk, quan, gambar 
         <Text className="text-gray-600 text-sm mb-2" numberOfLines={2}>
          Merk: {desk}
         </Text>
-
         <Text className="text-gray-500 font-semibold">
           Quantity: <Text className="text-gray-800">{quan}</Text>
         </Text>

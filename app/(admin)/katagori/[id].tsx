@@ -23,13 +23,8 @@ import ButtonDelete from "@/components/ButtonDelete";
 import ButtonEdit from "@/components/ButtonEdit";
 
 const DetailBarang: React.FC = () => {
-  const [nama_barang, setNama_barang] = useState("");
-  const [merk, setMerk] = useState("");
-  const [lokasi, setLokasi] = useState("");
-  const [stok, setStok] = useState("");
-  const [serial, setSerial] = useState("");
-  const [gambar, setGambar] = useState("");
-  const [gambarBaru, setGambarBaru] = useState("");
+  const [nama, setNama] = useState("");
+  const [desk, setDesk] = useState("");
   const [msg, setMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [edit, setEdit] = useState(false);
@@ -54,19 +49,15 @@ const DetailBarang: React.FC = () => {
         return;
       }
 
-      const res = await axios.get(`${BaseUrl}/barang/${id}`, {
+      const res = await axios.get(`${BaseUrl}/katagori/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       const data = res.data.data;
-      setNama_barang(data.nama_barang);
-      setLokasi(data.lokasi);
-      setMerk(data.merk);
-      setStok(data.stok);
-      setSerial(data.serial);
-      setGambar(data.gambar);
+      setNama(data.nama);
+      setDesk(data.desk);
     } catch (error) {
       console.error("Failed to fetch data:", error);
       setMsg("Failed to fetch data. Please try again.");
@@ -79,40 +70,6 @@ const DetailBarang: React.FC = () => {
     getData();
   }, []);
 
-  const pickImage = async () => {
-    Alert.alert("Pilih Gambar", "Pilih sumber gambar", [
-      {
-        text: "Galeri",
-        onPress: async () => {
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-          });
-          if (!result.canceled && result.assets) {
-            setGambarBaru(result.assets[0].uri);
-          }
-        },
-      },
-      {
-        text: "Kamera",
-        onPress: async () => {
-          await ImagePicker.requestCameraPermissionsAsync();
-          const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-          });
-          if (!result.canceled && result.assets) {
-            setGambarBaru(result.assets[0].uri);
-          }
-        },
-      },
-      { text: "Batal", style: "cancel" },
-    ]);
-  };
 
   const submitData = async () => {
     setIsLoading(true);
@@ -126,22 +83,11 @@ const DetailBarang: React.FC = () => {
       }
   
       const formData = new FormData();
-      formData.append("nama_barang", nama_barang);
-      formData.append("merk", merk);
-      formData.append("lokasi", lokasi);
-      formData.append("stok", stok);
-      formData.append("serial", serial);
+      formData.append("nama", nama);
+      formData.append("desk", desk);
       formData.append("_method", "PUT");
   
-      if (gambarBaru) {
-        formData.append("gambar", {
-          uri: gambarBaru,
-          type: "image/png",
-          name: "gambar-barang.png",
-        } as any);
-      }
-  
-      const response = await axios.post(`${BaseUrl}/barang/${id}`, formData, {
+      const response = await axios.post(`${BaseUrl}/katagori/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -184,7 +130,7 @@ const DetailBarang: React.FC = () => {
         return;
       }
 
-      const response = await axios.delete(`${BaseUrl}/barang/${id}`, {
+      const response = await axios.delete(`${BaseUrl}/katagori/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -199,7 +145,7 @@ const DetailBarang: React.FC = () => {
       console.error("Request error:", error);
       ToastAndroid.show("Data Gagal Di Hapus", ToastAndroid.SHORT);
     } finally {
-      router.push("/(admin)/barang");
+      router.push("/(admin)/katagori");
     }
   };
 
@@ -223,79 +169,28 @@ const DetailBarang: React.FC = () => {
                 }`}
               >
                 {edit ? <></> : <ButtonDelete handle={handleDelete} />}
-
-                <View className="relative w-56 h-56 rounded-full">
-                  <Image
-                    style={{
-                      borderRadius: 9999,
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    source={
-                      gambarBaru
-                        ? { uri: gambarBaru }
-                        : gambar
-                        ? {
-                            uri: `${GambarUrl}/${gambar}`,
-                          }
-                        : require("../../../assets/images/adaptive-icon.png")
-                    }
-                    resizeMode="cover"
-                  />
-                  {edit && (
-                    <View className="absolute bottom-0 right-3 ">
-                      <ButtonImage handler={pickImage} />
-                    </View>
-                  )}
-                </View>
                 {edit ? <></> : <ButtonEdit handle={handleEdit} />}
               </View>
 
               <View className="mb-4">
                 <InputTextEdit
-                  onChange={(value: any) => setNama_barang(value)}
+                  onChange={(value: any) => setNama(value)}
                   edit={edit}
-                  placeholder="Masukan Nama Barang"
-                  text="Barang"
-                  value={nama_barang}
+                  placeholder="Masukan Nama "
+                  text="Nama"
+                  value={nama}
                   keyboard="default"
                 />
 
                 <InputTextEdit
-                  onChange={(value: any) => setStok(value)}
+                  onChange={(value: any) => setDesk(value)}
                   edit={edit}
-                  placeholder="Masukan Stok"
-                  text="Stok"
-                  value={stok}
-                  keyboard="number-pad"
-                />
-
-                <InputTextEdit
-                  onChange={(value: any) => setSerial(value)}
-                  edit={edit}
-                  placeholder="Masukan Serial"
-                  text="Serial"
-                  value={serial}
-                  keyboard="number-pad"
-                />
-
-                <InputTextEdit
-                  onChange={(value: any) => setLokasi(value)}
-                  edit={edit}
-                  placeholder="Masukan Lokasi"
-                  text="Lokasi"
-                  value={lokasi}
+                  placeholder="Masukan deskripsi"
+                  text="Desk"
+                  value={desk}
                   keyboard="default"
                 />
 
-                <InputTextEdit
-                  onChange={(value: any) => setMerk(value)}
-                  edit={edit}
-                  placeholder="Masukan Merk"
-                  text="Merk"
-                  value={merk}
-                  keyboard="default"
-                />
               </View>
 
               <View className="flex-row gap-2">

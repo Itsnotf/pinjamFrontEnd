@@ -10,6 +10,7 @@ export default function Index() {
 
   const Dashboard = "./homeAdmin";
   const HomeUser = "./homeUser";
+
   const handleLink = () => {
     router.replace("/sign-in");
   };
@@ -35,7 +36,8 @@ export default function Index() {
   }, []);
 
   return (
-    <View className="bg-[#013FC4] h-full">
+    <View 
+     className="bg-primary h-full">
       <View className="items-center justify-center h-1/2">
         <View className="bg-white p-5 rounded-xl">
           <Image source={require("../assets/images/Logo.png")} />
